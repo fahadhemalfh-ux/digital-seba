@@ -13,7 +13,7 @@ export const BlankMemoModal: React.FC<BlankMemoModalProps> = ({
   onClose,
   shopProfile,
 }) => {
-  const [rowCount, setRowCount] = useState<number>(10);
+  const [rowCount, setRowCount] = useState<number>(14);
   const [copiesPerPage, setCopiesPerPage] = useState<1 | 2>(1);
   const [shopName, setShopName] = useState(shopProfile.name);
   const [propName, setPropName] = useState(shopProfile.propName);
@@ -149,7 +149,7 @@ export const BlankMemoModal: React.FC<BlankMemoModalProps> = ({
         </div>
 
         {/* Signatures */}
-        <div className="pt-8 flex justify-between items-end text-xs text-slate-900">
+        <div className="mt-auto pt-8 print:pt-14 flex justify-between items-end text-xs text-slate-900">
           <div className="text-center w-36">
             <div className="border-t border-slate-900 pt-1">ক্রেতার স্বাক্ষর</div>
           </div>
@@ -208,11 +208,11 @@ export const BlankMemoModal: React.FC<BlankMemoModalProps> = ({
                 onChange={(e) => setRowCount(Number(e.target.value))}
                 className="px-2 py-1 border border-slate-300 rounded bg-white text-xs"
               >
-                <option value={6}>৬ টি সারি</option>
                 <option value={8}>৮ টি সারি</option>
-                <option value={10}>১০ টি সারি (স্ট্যান্ডার্ড)</option>
+                <option value={10}>১০ টি সারি</option>
                 <option value={12}>১২ টি সারি</option>
-                <option value={14}>১৪ টি সারি</option>
+                <option value={14}>১৪ টি সারি (A4 ফুল পেজ)</option>
+                <option value={16}>১৬ টি সারি (A4 ফুল পেজ)</option>
               </select>
             </div>
 

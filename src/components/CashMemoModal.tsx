@@ -184,6 +184,9 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({
             <h3 className="font-bold text-sm sm:text-base">
               ডিজিটাল ক্যাশ মেমো (Digital Cash Memo)
             </h3>
+            <span className="text-[10px] bg-emerald-950 text-emerald-300 font-bold px-2 py-0.5 rounded border border-emerald-700 hidden sm:inline-block">
+              A4 ফুল পেজ সাইজ
+            </span>
           </div>
 
           <div className="flex items-center gap-2">
@@ -405,6 +408,21 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({
                       </td>
                     </tr>
                   ))}
+
+                  {/* Empty rows to gracefully fill out the A4 full page table */}
+                  {Array.from({ length: Math.max(0, 8 - items.length) }).map((_, idx) => (
+                    <tr key={`empty-${idx}`} className="border-b border-slate-300 h-7 print:table-row">
+                      <td className="border-r border-slate-900 p-1 text-center font-mono text-slate-400 text-[11px]">
+                        {items.length + idx + 1}
+                      </td>
+                      <td className="border-r border-slate-900 p-1"></td>
+                      <td className="border-r border-slate-900 p-1"></td>
+                      <td className="border-r border-slate-900 p-1"></td>
+                      <td className="border-r border-slate-900 p-1"></td>
+                      <td className="p-1"></td>
+                      <td className="no-print p-1"></td>
+                    </tr>
+                  ))}
                 </tbody>
               </table>
 
@@ -504,7 +522,7 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({
             </div>
 
             {/* Signature Area */}
-            <div className="pt-10 flex justify-between items-end text-xs text-slate-800">
+            <div className="mt-auto pt-10 print:pt-16 flex justify-between items-end text-xs text-slate-800">
               <div className="text-center w-36">
                 <div className="border-t border-slate-900 pt-1">ক্রেতার স্বাক্ষর</div>
               </div>
