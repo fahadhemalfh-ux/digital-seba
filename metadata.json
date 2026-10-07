@@ -1,0 +1,7 @@
+{
+  "name": "দোকান খাতা - ডিজিটাল রিটেইল শপ ম্যানেজার",
+  "description": "সহজ ও সম্পূর্ণ রিটেইল দোকান ব্যবস্থাপনা, দৈনিক আয়-ব্যয় হিসাব, নগদ ও বাকির খাতা এবং ডিজিটাল ও খালি ক্যাশ মেমো জেনারেটর।",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
