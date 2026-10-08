@@ -174,15 +174,15 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex justify-center p-2 sm:p-4 md:p-6">
+    <div className="modal-overlay fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex justify-center p-2 sm:p-4 md:p-6 print:p-0 print:m-0 print:bg-white print:static">
       {/* Modal Container */}
-      <div className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden my-auto border border-slate-200">
+      <div className="modal-container bg-white w-full max-w-4xl rounded-2xl shadow-2xl flex flex-col max-h-[92vh] overflow-hidden my-auto border border-slate-200 print:max-h-none print:shadow-none print:border-none print:w-full print:rounded-none">
         {/* Top Control Bar (Hidden during print) */}
         <div className="no-print bg-slate-900 text-white px-5 py-3.5 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2">
             <FileText className="w-5 h-5 text-emerald-400" />
             <h3 className="font-bold text-sm sm:text-base">
-              ডিজিটাল ক্যাশ মেমো (Digital Cash Memo)
+              ডিজিタル ক্যাশ মেমো (Digital Cash Memo)
             </h3>
             <span className="text-[10px] bg-emerald-950 text-emerald-300 font-bold px-2 py-0.5 rounded border border-emerald-700 hidden sm:inline-block">
               A4 ফুল পেজ সাইজ
@@ -219,11 +219,11 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({
         </div>
 
         {/* Scrollable Memo Body */}
-        <div className="overflow-y-auto p-4 sm:p-8 bg-slate-100 flex justify-center">
+        <div className="modal-scroll-area overflow-y-auto p-4 sm:p-8 bg-slate-100 flex justify-center print:p-0 print:bg-white print:overflow-visible">
           {/* Authentic Cash Memo Sheet / Layout */}
           <div
             id="printable-cash-memo"
-            className="print-area bg-white text-slate-900 p-6 sm:p-8 rounded-xl shadow-lg border border-slate-300 w-full max-w-2xl font-sans"
+            className="a4-memo-sheet bg-white text-slate-900 p-6 sm:p-8 rounded-xl shadow-lg border-2 border-slate-900 w-full max-w-2xl font-sans print:rounded-none print:shadow-none print:max-w-full"
           >
             {/* Header: Shop Profile */}
             <div className="text-center border-b-2 border-slate-900 pb-3 mb-4">

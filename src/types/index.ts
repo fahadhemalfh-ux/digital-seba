@@ -71,4 +71,33 @@ export interface ShopProfile {
   useBengaliDigits: boolean;
 }
 
+export interface RateItem {
+  id: string;
+  name: string;
+  category: 'photocopy' | 'online' | 'photo' | 'compose' | 'stationery' | 'others';
+  unit: string;
+  price: number;
+  description?: string;
+}
+
+export interface CashClosingRecord {
+  id: string;
+  date: string;
+  time: string;
+  notes?: string;
+  denominations: {
+    note1000: number;
+    note500: number;
+    note200: number;
+    note100: number;
+    note50: number;
+    note20: number;
+    note10: number;
+    coin: number;
+  };
+  totalPhysicalCash: number;
+  systemExpectedCash: number;
+  difference: number;
+}
+
 export type DateFilterType = 'today' | 'yesterday' | 'this_week' | 'this_month' | 'all' | 'custom';

@@ -26,6 +26,10 @@ interface HeaderProps {
   onOpenDigitalMemo: () => void;
   onOpenBlankMemo: () => void;
   onOpenSettings: () => void;
+  onOpenCashClosing: () => void;
+  onOpenRateChart: () => void;
+  onOpenCustomerDirectory: () => void;
+  onOpenCalculator: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -38,6 +42,10 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenDigitalMemo,
   onOpenBlankMemo,
   onOpenSettings,
+  onOpenCashClosing,
+  onOpenRateChart,
+  onOpenCustomerDirectory,
+  onOpenCalculator,
 }) => {
   const todayStr = getTodayDateString();
   const currentTime = getCurrentTimeString();
@@ -145,6 +153,38 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <Printer className="w-3.5 h-3.5" />
                 <span className="hidden sm:inline">খালি মেমো</span>
+              </button>
+
+              <button
+                onClick={onOpenRateChart}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-purple-50 hover:bg-purple-100 text-purple-700 border border-purple-200 text-xs font-semibold rounded-lg transition-all"
+                title="ডিজিটাল সেবা রেট চার্ট ও মূল্য তালিকা"
+              >
+                <span>রেট চার্ট</span>
+              </button>
+
+              <button
+                onClick={onOpenCashClosing}
+                className="inline-flex items-center gap-1.5 px-2.5 py-1.5 bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 text-xs font-semibold rounded-lg transition-all"
+                title="ক্যাশ ড্রয়ার ও নোট গণনা"
+              >
+                <span>ক্যাশ ক্লোজিং</span>
+              </button>
+
+              <button
+                onClick={onOpenCustomerDirectory}
+                className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors border border-slate-200"
+                title="গ্রাহক ফোনবুক ও তালিকা"
+              >
+                <BookOpen className="w-4 h-4" />
+              </button>
+
+              <button
+                onClick={onOpenCalculator}
+                className="p-1.5 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors border border-slate-200"
+                title="ক্যাশ ক্যালকুলেটর"
+              >
+                <CreditCard className="w-4 h-4" />
               </button>
 
               <button

@@ -5,7 +5,7 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
-    base: '/digital-seba/',
+    base: process.env.NODE_ENV === 'production' ? '/digital-seba/' : '/',
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {

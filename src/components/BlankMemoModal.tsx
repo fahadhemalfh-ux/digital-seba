@@ -29,14 +29,19 @@ export const BlankMemoModal: React.FC<BlankMemoModalProps> = ({
   };
 
   const renderSingleMemo = (copyIndex: number) => {
+    const isHalf = copiesPerPage === 2;
+    const effectiveRows = isHalf ? 6 : rowCount;
+
     return (
       <div
         key={copyIndex}
-        className="blank-memo-sheet bg-white text-slate-900 p-6 sm:p-7 rounded-xl border-2 border-slate-900 shadow-md font-sans mb-6 last:mb-0 print:border-slate-900 print:shadow-none print:m-0 print:p-4"
+        className={`${
+          isHalf ? 'a4-half-sheet' : 'a4-memo-sheet'
+        } bg-white text-slate-900 p-6 sm:p-7 rounded-xl border-2 border-slate-900 shadow-md font-sans mb-6 last:mb-0 print:border-slate-900 print:shadow-none print:m-0 print:rounded-none`}
       >
         {/* Header */}
         <div className="text-center border-b-2 border-slate-900 pb-2 mb-3">
-          <h2 className="text-xl sm:text-2xl font-black text-slate-950 tracking-tight leading-tight">
+          <h2 className={`${isHalf ? 'text-lg sm:text-xl' : 'text-xl sm:text-2xl'} font-black text-slate-950 tracking-tight leading-tight`}>
             {shopName}
           </h2>
           {propName && (
@@ -95,7 +100,7 @@ export const BlankMemoModal: React.FC<BlankMemoModalProps> = ({
               </tr>
             </thead>
             <tbody>
-              {Array.from({ length: rowCount }).map((_, i) => (
+              {Array.from({ length: effectiveRows }).map((_, i) => (
                 <tr key={i} className="border-b border-slate-400 h-7">
                   <td className="border-r border-slate-900 text-center text-slate-500 font-mono text-[11px]">
                     {i + 1}
@@ -164,8 +169,8 @@ export const BlankMemoModal: React.FC<BlankMemoModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex justify-center p-2 sm:p-4 md:p-6">
-      <div className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl flex flex-col max-h-[94vh] overflow-hidden my-auto border border-slate-200">
+    <div className="modal-overlay fixed inset-0 z-50 overflow-y-auto bg-slate-900/60 backdrop-blur-xs flex justify-center p-2 sm:p-4 md:p-6 print:p-0 print:m-0 print:bg-white print:static">
+      <div className="modal-container bg-white w-full max-w-4xl rounded-2xl shadow-2xl flex flex-col max-h-[94vh] overflow-hidden my-auto border border-slate-200 print:max-h-none print:shadow-none print:border-none print:w-full print:rounded-none">
         {/* Top Control Bar */}
         <div className="no-print bg-slate-900 text-white px-5 py-3.5 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2">
@@ -249,12 +254,12 @@ export const BlankMemoModal: React.FC<BlankMemoModalProps> = ({
         </div>
 
         {/* Scrollable Printable Area */}
-        <div className="overflow-y-auto p-4 sm:p-8 bg-slate-200 flex flex-col items-center">
-          <div className="print-area w-full max-w-2xl">
+        <div className="modal-scroll-area overflow-y-auto p-4 sm:p-8 bg-slate-200 flex flex-col items-center print:p-0 print:bg-white print:overflow-visible">
+          <div className="w-full max-w-2xl print:max-w-full">
             {copiesPerPage === 1 ? (
               renderSingleMemo(1)
             ) : (
-              <div className="space-y-6">
+              <div className="space-y-6 print:space-y-4">
                 {renderSingleMemo(1)}
                 <div className="no-print border-b-2 border-dashed border-slate-400 my-4 text-center text-xs text-slate-500 font-mono">
                   - - - - - - - - - এখান থেকে কাটুন (Cut Here) - - - - - - - - -

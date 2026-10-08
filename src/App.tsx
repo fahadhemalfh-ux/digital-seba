@@ -13,8 +13,21 @@ import { DueBook } from './components/DueBook';
 import { CashMemoModal } from './components/CashMemoModal';
 import { BlankMemoModal } from './components/BlankMemoModal';
 import { SettingsModal } from './components/SettingsModal';
-import { ExpenseRecord, PurchaseRecord, SaleRecord, ShopProfile } from './types';
-import { defaultShopProfile, getInitialData } from './data/initialData';
+import { CashClosingModal } from './components/CashClosingModal';
+import { RateChartModal } from './components/RateChartModal';
+import { CustomerDirectoryModal } from './components/CustomerDirectoryModal';
+import { QuickCalculatorModal } from './components/QuickCalculatorModal';
+import { FloatingActionButton } from './components/FloatingActionButton';
+import {
+  CashClosingRecord,
+  ExpenseRecord,
+  PurchaseRecord,
+  RateItem,
+  SaleRecord,
+  ShopProfile,
+} from './types';
+import { defaultRateList, defaultShopProfile, getInitialData } from './data/initialData';
+import { getTodayDateString } from './utils/helpers';
 
 export default function App() {
   // 1. Shop Profile
@@ -23,7 +36,7 @@ export default function App() {
       const saved = localStorage.getItem('dokankhata_shop_profile');
       if (saved) {
         const parsed = JSON.parse(saved);
-        // If old placeholder or contains 'লাইব্রেরী', upgrade to user's real business profile
+        // If old placeholder, upgrade to user's real business profile
         if (
           parsed.name?.includes('আল-মদিনা') ||
           parsed.name?.includes('লাইব্রেরী') ||
@@ -73,6 +86,28 @@ export default function App() {
     return getInitialData().expenses;
   });
 
+  // 5. Digital Rate Chart Catalog
+  const [rateList, setRateList] = useState<RateItem[]>(() => {
+    try {
+      const saved = localStorage.getItem('digital_seba_rates');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error(e);
+    }
+    return defaultRateList;
+  });
+
+  // 6. Cash Closing Records History
+  const [cashClosings, setCashClosings] = useState<CashClosingRecord[]>(() => {
+    try {
+      const saved = localStorage.getItem('digital_seba_closings');
+      if (saved) return JSON.parse(saved);
+    } catch (e) {
+      console.error(e);
+    }
+    return [];
+  });
+
   // Active Navigation Tab
   const [activeTab, setActiveTab] = useState<string>('dashboard');
 
@@ -81,6 +116,23 @@ export default function App() {
   const [selectedMemoSale, setSelectedMemoSale] = useState<SaleRecord | null>(null);
   const [isBlankMemoOpen, setIsBlankMemoOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isCashClosingOpen, setIsCashClosingOpen] = useState(false);
+  const [isRateChartOpen, setIsRateChartOpen] = useState(false);
+  const [isCustomerDirectoryOpen, setIsCustomerDirectoryOpen] = useState(false);
+  const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
+
+  // Cross-trigger prefill states
+  const [autoOpenSaleForm, setAutoOpenSaleForm] = useState(false);
+  const [prefillCustomerForSale, setPrefillCustomerForSale] = useState<{
+    name: string;
+    phone: string;
+    address?: string;
+  } | null>(null);
+  const [prefillServiceForSale, setPrefillServiceForSale] = useState<{
+    name: string;
+    unit: string;
+    price: number;
+  } | null>(null);
 
   // Sync to localStorage
   useEffect(() => {
@@ -115,6 +167,22 @@ export default function App() {
     }
   }, [expenses]);
 
+  useEffect(() => {
+    try {
+      localStorage.setItem('digital_seba_rates', JSON.stringify(rateList));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [rateList]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('digital_seba_closings', JSON.stringify(cashClosings));
+    } catch (e) {
+      console.error(e);
+    }
+  }, [cashClosings]);
+
   // Handlers for Sales
   const handleAddSale = (newSale: SaleRecord) => {
     setSales((prev) => [newSale, ...prev]);
@@ -146,6 +214,20 @@ export default function App() {
     setExpenses((prev) => prev.filter((e) => e.id !== id));
   };
 
+  // Handlers for Rate List
+  const handleAddRateItem = (newItem: RateItem) => {
+    setRateList((prev) => [newItem, ...prev]);
+  };
+
+  const handleDeleteRateItem = (id: string) => {
+    setRateList((prev) => prev.filter((r) => r.id !== id));
+  };
+
+  // Handlers for Cash Closing
+  const handleSaveClosingRecord = (record: CashClosingRecord) => {
+    setCashClosings((prev) => [record, ...prev]);
+  };
+
   // Trigger Memo View
   const handleOpenDigitalMemo = (sale?: SaleRecord) => {
     setSelectedMemoSale(sale || null);
@@ -158,6 +240,7 @@ export default function App() {
     setSales(initial.sales);
     setPurchases(initial.purchases);
     setExpenses(initial.expenses);
+    setRateList(defaultRateList);
     setShopProfile(defaultShopProfile);
   };
 
@@ -166,6 +249,7 @@ export default function App() {
     setSales([]);
     setPurchases([]);
     setExpenses([]);
+    setCashClosings([]);
   };
 
   // Restore from JSON backup file
@@ -181,19 +265,55 @@ export default function App() {
     if (data.shopProfile) setShopProfile(data.shopProfile);
   };
 
+  // Calculate Today's Expected System Cash
+  const todayStr = getTodayDateString();
+  const todayReceivedCash = sales
+    .filter((s) => s.date === todayStr)
+    .reduce((acc, curr) => acc + curr.paidAmount, 0);
+
+  const todayPurchaseCashOut = purchases
+    .filter((p) => p.date === todayStr && p.paymentMethod !== 'due')
+    .reduce((acc, curr) => acc + curr.totalCost, 0);
+
+  const todayExpenseCashOut = expenses
+    .filter((e) => e.date === todayStr && e.paymentMethod === 'cash')
+    .reduce((acc, curr) => acc + curr.amount, 0);
+
+  const todaySystemCash = todayReceivedCash - todayPurchaseCashOut - todayExpenseCashOut;
+
+  // Open Sale form with specific customer or service
+  const handleQuickSaleWithCustomer = (name: string, phone: string, address?: string) => {
+    setPrefillCustomerForSale({ name, phone, address });
+    setActiveTab('sales');
+    setAutoOpenSaleForm(true);
+  };
+
+  const handleQuickSaleWithService = (service: RateItem) => {
+    setPrefillServiceForSale({ name: service.name, unit: service.unit, price: service.price });
+    setActiveTab('sales');
+    setAutoOpenSaleForm(true);
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-emerald-500 selection:text-white">
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-emerald-500 selection:text-white relative">
       {/* Top Navigation & Brand Header */}
       <Header
         shopProfile={shopProfile}
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        onOpenQuickSale={() => setActiveTab('sales')}
+        onOpenQuickSale={() => {
+          setActiveTab('sales');
+          setAutoOpenSaleForm(true);
+        }}
         onOpenQuickPurchase={() => setActiveTab('purchases')}
         onOpenQuickExpense={() => setActiveTab('expenses')}
         onOpenDigitalMemo={() => handleOpenDigitalMemo()}
         onOpenBlankMemo={() => setIsBlankMemoOpen(true)}
         onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenCashClosing={() => setIsCashClosingOpen(true)}
+        onOpenRateChart={() => setIsRateChartOpen(true)}
+        onOpenCustomerDirectory={() => setIsCustomerDirectoryOpen(true)}
+        onOpenCalculator={() => setIsCalculatorOpen(true)}
       />
 
       {/* Main Container */}
@@ -204,7 +324,10 @@ export default function App() {
             purchases={purchases}
             expenses={expenses}
             shopProfile={shopProfile}
-            onOpenQuickSale={() => setActiveTab('sales')}
+            onOpenQuickSale={() => {
+              setActiveTab('sales');
+              setAutoOpenSaleForm(true);
+            }}
             onOpenQuickPurchase={() => setActiveTab('purchases')}
             onOpenQuickExpense={() => setActiveTab('expenses')}
             onOpenDigitalMemo={handleOpenDigitalMemo}
@@ -220,6 +343,9 @@ export default function App() {
             onDeleteSale={handleDeleteSale}
             shopProfile={shopProfile}
             onOpenDigitalMemo={handleOpenDigitalMemo}
+            autoOpenForm={autoOpenSaleForm}
+            prefillCustomer={prefillCustomerForSale}
+            prefillService={prefillServiceForSale}
           />
         )}
 
@@ -262,6 +388,20 @@ export default function App() {
         </div>
       </footer>
 
+      {/* Floating Action Button (FAB) */}
+      <FloatingActionButton
+        onOpenSale={() => {
+          setActiveTab('sales');
+          setAutoOpenSaleForm(true);
+        }}
+        onOpenPurchase={() => setActiveTab('purchases')}
+        onOpenExpense={() => setActiveTab('expenses')}
+        onOpenMemo={() => handleOpenDigitalMemo()}
+        onOpenCashClosing={() => setIsCashClosingOpen(true)}
+        onOpenRateChart={() => setIsRateChartOpen(true)}
+        onOpenCalculator={() => setIsCalculatorOpen(true)}
+      />
+
       {/* Digital Cash Memo Modal */}
       <CashMemoModal
         isOpen={isDigitalMemoOpen}
@@ -278,6 +418,43 @@ export default function App() {
       <BlankMemoModal
         isOpen={isBlankMemoOpen}
         onClose={() => setIsBlankMemoOpen(false)}
+        shopProfile={shopProfile}
+      />
+
+      {/* Cash Closing Modal */}
+      <CashClosingModal
+        isOpen={isCashClosingOpen}
+        onClose={() => setIsCashClosingOpen(false)}
+        shopProfile={shopProfile}
+        todaySystemCash={todaySystemCash}
+        onSaveClosingRecord={handleSaveClosingRecord}
+        savedClosings={cashClosings}
+      />
+
+      {/* Rate Chart Modal */}
+      <RateChartModal
+        isOpen={isRateChartOpen}
+        onClose={() => setIsRateChartOpen(false)}
+        shopProfile={shopProfile}
+        rateList={rateList}
+        onAddRateItem={handleAddRateItem}
+        onDeleteRateItem={handleDeleteRateItem}
+        onSelectServiceToSale={handleQuickSaleWithService}
+      />
+
+      {/* Customer Directory Modal */}
+      <CustomerDirectoryModal
+        isOpen={isCustomerDirectoryOpen}
+        onClose={() => setIsCustomerDirectoryOpen(false)}
+        sales={sales}
+        shopProfile={shopProfile}
+        onSelectCustomerForSale={handleQuickSaleWithCustomer}
+      />
+
+      {/* Quick Calculator Modal */}
+      <QuickCalculatorModal
+        isOpen={isCalculatorOpen}
+        onClose={() => setIsCalculatorOpen(false)}
         shopProfile={shopProfile}
       />
 

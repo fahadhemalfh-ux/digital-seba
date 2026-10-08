@@ -1,4 +1,4 @@
-import { ExpenseRecord, PurchaseRecord, SaleRecord, ShopProfile } from '../types';
+import { ExpenseRecord, PurchaseRecord, RateItem, SaleRecord, ShopProfile } from '../types';
 import { getTodayDateString } from '../utils/helpers';
 
 export const defaultShopProfile: ShopProfile = {
@@ -11,6 +11,22 @@ export const defaultShopProfile: ShopProfile = {
   currency: '৳',
   useBengaliDigits: false,
 };
+
+export const defaultRateList: RateItem[] = [
+  { id: 'rate-1', name: 'ফটোকপি (A4 এক পাশ)', category: 'photocopy', unit: 'পাতা', price: 2.5, description: 'উন্নত মানের পরিষ্কার ফটোকপি' },
+  { id: 'rate-2', name: 'ফটোকপি (A4 বোথ সাইড)', category: 'photocopy', unit: 'পাতা', price: 4.0, description: 'দুই পাশ ফটোকপি' },
+  { id: 'rate-3', name: 'কালার ফটো প্রিন্ট (A4 সাইজ)', category: 'photo', unit: 'পাতা', price: 30, description: 'হাই-গ্লসি ফটো পেপারে প্রিন্ট' },
+  { id: 'rate-4', name: 'পাসপোর্ট সাইজ ছবি প্রিন্ট (৪ কপি)', category: 'photo', unit: 'সেট', price: 80, description: 'ল্যাব কোয়ালিটি ছবি' },
+  { id: 'rate-5', name: 'সরকারি চাকরির অনলাইন আবেদন ও এডমিট', category: 'online', unit: 'সেবা', price: 150, description: 'আবেদন ও প্রবেশপত্র প্রিন্ট' },
+  { id: 'rate-6', name: 'জন্ম নিবন্ধন অনলাইন আবেদন ও সংশোধন', category: 'online', unit: 'সেবা', price: 200, description: 'সংশোধন ও ভেরিফিকেশন' },
+  { id: 'rate-7', name: 'জমির খতিয়ান ও পরচা অনলাইন ডাউনলোড', category: 'online', unit: 'কপি', price: 100, description: 'খতিয়ান ডাউনলোড ও কপি' },
+  { id: 'rate-8', name: 'সার্টিফিকেট ও ডকুমেন্ট লেমিনেটিং', category: 'photocopy', unit: 'পিস', price: 30, description: 'উন্নত মানের হার্ড লেমিনেশন' },
+  { id: 'rate-9', name: 'কম্পিউটার কম্পোজ (বাংলা / ইংরেজি)', category: 'compose', unit: 'পৃষ্ঠা', price: 50, description: 'দরখাস্ত, দলিল ও প্রজেক্ট' },
+  { id: 'rate-10', name: 'ডকুমেন্ট স্ক্যানিং ও ইমেইল পাঠানো', category: 'compose', unit: 'সেবা', price: 25, description: 'পিডিএফ স্ক্যান ও মেইল' },
+  { id: 'rate-11', name: 'স্পাইরাল বাইন্ডিং (বড় সাইজ)', category: 'photocopy', unit: 'পিস', price: 60, description: 'বই ও নোট বাইন্ডিং' },
+  { id: 'rate-12', name: 'বসুন্ধরা এক্সারসাইজ খাতা (১২০ পাতা)', category: 'stationery', unit: 'পিস', price: 55, description: 'সাদা কাগজের খাতা' },
+  { id: 'rate-13', name: 'ম্যাটাডোর অল-টাইম বলপেন (১ বক্স)', category: 'stationery', unit: 'বক্স', price: 90, description: '২০ পিস কলম' },
+];
 
 export const getInitialData = (): {
   sales: SaleRecord[];

@@ -30,6 +30,9 @@ interface SalesManagerProps {
   onDeleteSale: (id: string) => void;
   shopProfile: ShopProfile;
   onOpenDigitalMemo: (sale?: SaleRecord) => void;
+  autoOpenForm?: boolean;
+  prefillCustomer?: { name: string; phone: string; address?: string } | null;
+  prefillService?: { name: string; unit: string; price: number } | null;
 }
 
 export const SalesManager: React.FC<SalesManagerProps> = ({
@@ -38,16 +41,19 @@ export const SalesManager: React.FC<SalesManagerProps> = ({
   onDeleteSale,
   shopProfile,
   onOpenDigitalMemo,
+  autoOpenForm,
+  prefillCustomer,
+  prefillService,
 }) => {
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState(autoOpenForm || false);
   const [searchQuery, setSearchQuery] = useState('');
   const [paymentFilter, setPaymentFilter] = useState<string>('all');
   const [selectedDate, setSelectedDate] = useState<string>('');
 
   // Form State
-  const [customerName, setCustomerName] = useState('');
-  const [customerPhone, setCustomerPhone] = useState('');
-  const [customerAddress, setCustomerAddress] = useState('');
+  const [customerName, setCustomerName] = useState(prefillCustomer?.name || '');
+  const [customerPhone, setCustomerPhone] = useState(prefillCustomer?.phone || '');
+  const [customerAddress, setCustomerAddress] = useState(prefillCustomer?.address || '');
   const [saleDate, setSaleDate] = useState(getTodayDateString());
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash');
   const [discount, setDiscount] = useState<number>(0);
@@ -56,8 +62,44 @@ export const SalesManager: React.FC<SalesManagerProps> = ({
 
   // Items State (multiple items allowed)
   const [items, setItems] = useState<SaleItem[]>([
-    { id: '1', name: '', quantity: 1, unit: 'কেজি', unitPrice: 0, total: 0 },
+    prefillService
+      ? {
+          id: '1',
+          name: prefillService.name,
+          quantity: 1,
+          unit: prefillService.unit,
+          unitPrice: prefillService.price,
+          total: prefillService.price,
+        }
+      : { id: '1', name: '', quantity: 1, unit: 'পাতা', unitPrice: 0, total: 0 },
   ]);
+
+  // Effect to handle incoming prefill triggers
+  React.useEffect(() => {
+    if (autoOpenForm) setShowForm(true);
+    if (prefillCustomer) {
+      setCustomerName(prefillCustomer.name);
+      setCustomerPhone(prefillCustomer.phone);
+      if (prefillCustomer.address) setCustomerAddress(prefillCustomer.address);
+      setShowForm(true);
+    }
+  }, [autoOpenForm, prefillCustomer]);
+
+  React.useEffect(() => {
+    if (prefillService) {
+      setItems([
+        {
+          id: Date.now().toString(),
+          name: prefillService.name,
+          quantity: 1,
+          unit: prefillService.unit,
+          unitPrice: prefillService.price,
+          total: prefillService.price,
+        },
+      ]);
+      setShowForm(true);
+    }
+  }, [prefillService]);
 
   const unitsList = ['পিস', 'পাতা', 'কপি', 'সেট', 'বক্স', 'প্যাকেট', 'রিম', 'ডজন', 'বই', 'কেজি', 'মিটার'];
 
@@ -434,6 +476,20 @@ export const SalesManager: React.FC<SalesManagerProps> = ({
                   ))}
                 </tbody>
               </table>
+            </div>
+
+            {/* Prominent + Add Item Button */}
+            <div className="pt-2">
+              <button
+                type="button"
+                onClick={addItemRow}
+                className="w-full py-2.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border-2 border-dashed border-emerald-300 hover:border-emerald-500 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all shadow-2xs group"
+              >
+                <div className="w-5 h-5 rounded-full bg-emerald-600 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                  <Plus className="w-3.5 h-3.5 stroke-[3]" />
+                </div>
+                <span>+ নতুন পণ্য / সার্ভিস লাইন যোগ করুন (Add Product / Service)</span>
+              </button>
             </div>
           </div>
 
