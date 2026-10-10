@@ -69,6 +69,10 @@ export interface ShopProfile {
   memoFooter: string;
   currency: string;
   useBengaliDigits: boolean;
+  printMarginTop?: number;
+  printMarginBottom?: number;
+  printMarginLeft?: number;
+  printMarginRight?: number;
 }
 
 export interface RateItem {

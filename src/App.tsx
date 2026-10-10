@@ -45,7 +45,14 @@ export default function App() {
           localStorage.setItem('dokankhata_shop_profile', JSON.stringify(defaultShopProfile));
           return defaultShopProfile;
         }
-        return parsed;
+        return {
+          ...defaultShopProfile,
+          ...parsed,
+          printMarginTop: parsed.printMarginTop ?? 6,
+          printMarginBottom: parsed.printMarginBottom ?? 6,
+          printMarginLeft: parsed.printMarginLeft ?? 8,
+          printMarginRight: parsed.printMarginRight ?? 8,
+        };
       }
     } catch (e) {
       console.error(e);
@@ -142,6 +149,47 @@ export default function App() {
       console.error(e);
     }
   }, [shopProfile]);
+
+  // Dynamic Print Margins Injection into document <head>
+  useEffect(() => {
+    const top = shopProfile.printMarginTop ?? 6;
+    const bottom = shopProfile.printMarginBottom ?? 6;
+    const left = shopProfile.printMarginLeft ?? 8;
+    const right = shopProfile.printMarginRight ?? 8;
+
+    // Set CSS variables on documentElement for real-time calc()
+    document.documentElement.style.setProperty('--print-margin-top', `${top}mm`);
+    document.documentElement.style.setProperty('--print-margin-bottom', `${bottom}mm`);
+    document.documentElement.style.setProperty('--print-margin-left', `${left}mm`);
+    document.documentElement.style.setProperty('--print-margin-right', `${right}mm`);
+
+    let styleEl = document.getElementById('dynamic-print-margin-style') as HTMLStyleElement | null;
+    if (!styleEl) {
+      styleEl = document.createElement('style');
+      styleEl.id = 'dynamic-print-margin-style';
+      document.head.appendChild(styleEl);
+    }
+
+    styleEl.innerHTML = `
+      @media print {
+        @page {
+          size: A4 portrait !important;
+          margin: ${top}mm ${right}mm ${bottom}mm ${left}mm !important;
+        }
+        :root {
+          --print-margin-top: ${top}mm !important;
+          --print-margin-bottom: ${bottom}mm !important;
+          --print-margin-left: ${left}mm !important;
+          --print-margin-right: ${right}mm !important;
+        }
+      }
+    `;
+  }, [
+    shopProfile.printMarginTop,
+    shopProfile.printMarginBottom,
+    shopProfile.printMarginLeft,
+    shopProfile.printMarginRight,
+  ]);
 
   useEffect(() => {
     try {
@@ -316,8 +364,8 @@ export default function App() {
         onOpenCalculator={() => setIsCalculatorOpen(true)}
       />
 
-      {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Main Container (Hidden in Print so only the active memo prints) */}
+      <main className="no-print flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {activeTab === 'dashboard' && (
           <DashboardOverview
             sales={sales}

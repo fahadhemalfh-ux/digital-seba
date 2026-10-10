@@ -182,10 +182,11 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({
           <div className="flex items-center gap-2">
             <FileText className="w-5 h-5 text-emerald-400" />
             <h3 className="font-bold text-sm sm:text-base">
-              ডিজিタル ক্যাশ মেমো (Digital Cash Memo)
+              ডিজিটাল ক্যাশ মেমো (Digital Cash Memo)
             </h3>
-            <span className="text-[10px] bg-emerald-950 text-emerald-300 font-bold px-2 py-0.5 rounded border border-emerald-700 hidden sm:inline-block">
-              A4 ফুল পেজ সাইজ
+            <span className="text-[11px] bg-emerald-950 text-emerald-300 font-medium px-2 py-0.5 rounded border border-emerald-700 hidden sm:inline-flex items-center gap-1">
+              <span>মার্জিন: {shopProfile.printMarginTop ?? 6}mm</span>
+              <span className="text-emerald-400 font-bold">• ১ পেজ ফুল ফিট</span>
             </span>
           </div>
 
@@ -226,12 +227,12 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({
             className="a4-memo-sheet bg-white text-slate-900 p-6 sm:p-8 rounded-xl shadow-lg border-2 border-slate-900 w-full max-w-2xl font-sans print:rounded-none print:shadow-none print:max-w-full"
           >
             {/* Header: Shop Profile */}
-            <div className="text-center border-b-2 border-slate-900 pb-3 mb-4">
+            <div className="text-center border-b-2 border-slate-900 pb-3 mb-4 print:pb-1.5 print:mb-2">
               <input
                 type="text"
                 value={shopName}
                 onChange={(e) => setShopName(e.target.value)}
-                className="w-full text-center text-xl sm:text-2xl font-black text-slate-900 border-b border-transparent hover:border-slate-300 focus:border-emerald-600 focus:outline-hidden tracking-tight"
+                className="w-full text-center text-xl sm:text-2xl print:text-xl font-black text-slate-900 border-b border-transparent hover:border-slate-300 focus:border-emerald-600 focus:outline-hidden tracking-tight"
                 placeholder="দোকানের নাম"
               />
               <div className="text-xs text-slate-700 font-semibold mt-0.5 flex items-center justify-center gap-1">
@@ -272,13 +273,13 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({
                   </>
                 )}
               </div>
-              <div className="inline-block mt-2 px-4 py-0.5 bg-slate-900 text-white font-bold text-xs uppercase tracking-widest rounded">
+              <div className="inline-block mt-2 print:mt-1 px-4 py-0.5 bg-slate-900 text-white font-bold text-xs uppercase tracking-widest rounded">
                 ক্যাশ মেমো / CASH MEMO
               </div>
             </div>
 
             {/* Memo No, Date & Customer Details */}
-            <div className="grid grid-cols-2 gap-3 text-xs mb-4 pb-3 border-b border-slate-200">
+            <div className="grid grid-cols-2 gap-3 text-xs mb-4 pb-3 print:mb-2 print:pb-1.5 border-b border-slate-200">
               <div className="space-y-1.5">
                 <div className="flex items-center gap-1">
                   <span className="font-bold text-slate-800 whitespace-nowrap">মেমো নং:</span>
@@ -335,26 +336,26 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({
             </div>
 
             {/* Line Items Table */}
-            <div className="mb-4">
+            <div className="mb-3 print:mb-2">
               <table className="w-full border-collapse border border-slate-900 text-xs">
                 <thead>
                   <tr className="bg-slate-100 text-slate-900 border-b border-slate-900 font-bold">
-                    <th className="border-r border-slate-900 p-1.5 text-center w-10">ক্রমিক</th>
-                    <th className="border-r border-slate-900 p-1.5 text-left">পণ্যের বিবরণ (Description)</th>
-                    <th className="border-r border-slate-900 p-1.5 text-center w-16">পরিমাণ</th>
-                    <th className="border-r border-slate-900 p-1.5 text-center w-16">একক</th>
-                    <th className="border-r border-slate-900 p-1.5 text-right w-20">দর (৳)</th>
-                    <th className="p-1.5 text-right w-24">মোট টাকা (৳)</th>
+                    <th className="border-r border-slate-900 p-1.5 print:py-1 print:px-1.5 text-center w-10">ক্রমিক</th>
+                    <th className="border-r border-slate-900 p-1.5 print:py-1 print:px-1.5 text-left">পণ্যের বিবরণ (Description)</th>
+                    <th className="border-r border-slate-900 p-1.5 print:py-1 print:px-1.5 text-center w-16">পরিমাণ</th>
+                    <th className="border-r border-slate-900 p-1.5 print:py-1 print:px-1.5 text-center w-16">একক</th>
+                    <th className="border-r border-slate-900 p-1.5 print:py-1 print:px-1.5 text-right w-20">দর (৳)</th>
+                    <th className="p-1.5 print:py-1 print:px-1.5 text-right w-24">মোট টাকা (৳)</th>
                     <th className="no-print p-1.5 text-center w-8"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {items.map((item, index) => (
                     <tr key={item.id} className="border-b border-slate-300">
-                      <td className="border-r border-slate-900 p-1 text-center font-mono text-slate-600">
+                      <td className="border-r border-slate-900 p-1 print:py-0.5 text-center font-mono text-slate-600">
                         {index + 1}
                       </td>
-                      <td className="border-r border-slate-900 p-1">
+                      <td className="border-r border-slate-900 p-1 print:py-0.5">
                         <input
                           type="text"
                           placeholder="পণ্যের নাম..."
@@ -363,7 +364,7 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({
                           className="w-full bg-transparent border-0 p-0 text-xs focus:ring-0 font-medium"
                         />
                       </td>
-                      <td className="border-r border-slate-900 p-1 text-center">
+                      <td className="border-r border-slate-900 p-1 print:py-0.5 text-center">
                         <input
                           type="number"
                           min="0.1"
@@ -373,7 +374,7 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({
                           className="w-full bg-transparent border-0 p-0 text-xs text-center focus:ring-0"
                         />
                       </td>
-                      <td className="border-r border-slate-900 p-1 text-center">
+                      <td className="border-r border-slate-900 p-1 print:py-0.5 text-center">
                         <input
                           type="text"
                           value={item.unit}
@@ -381,7 +382,7 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({
                           className="w-full bg-transparent border-0 p-0 text-xs text-center focus:ring-0"
                         />
                       </td>
-                      <td className="border-r border-slate-900 p-1 text-right">
+                      <td className="border-r border-slate-900 p-1 print:py-0.5 text-right">
                         <input
                           type="number"
                           min="0"
@@ -392,7 +393,7 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({
                           className="w-full bg-transparent border-0 p-0 text-xs text-right focus:ring-0"
                         />
                       </td>
-                      <td className="p-1 text-right font-bold text-slate-900">
+                      <td className="p-1 print:py-0.5 text-right font-bold text-slate-900">
                         {formatCurrency(item.total, shopProfile.useBengaliDigits)}
                       </td>
                       <td className="no-print p-1 text-center">
@@ -409,17 +410,17 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({
                     </tr>
                   ))}
 
-                  {/* Empty rows to gracefully fill out the A4 full page table */}
-                  {Array.from({ length: Math.max(0, 8 - items.length) }).map((_, idx) => (
-                    <tr key={`empty-${idx}`} className="border-b border-slate-300 h-7 print:table-row">
-                      <td className="border-r border-slate-900 p-1 text-center font-mono text-slate-400 text-[11px]">
+                  {/* Empty rows to gracefully fill out the single page table */}
+                  {Array.from({ length: Math.max(0, Math.min(5, 5 - items.length)) }).map((_, idx) => (
+                    <tr key={`empty-${idx}`} className="border-b border-slate-300 h-6 print:h-5 print:table-row">
+                      <td className="border-r border-slate-900 p-1 print:py-0.5 text-center font-mono text-slate-400 text-[11px]">
                         {items.length + idx + 1}
                       </td>
-                      <td className="border-r border-slate-900 p-1"></td>
-                      <td className="border-r border-slate-900 p-1"></td>
-                      <td className="border-r border-slate-900 p-1"></td>
-                      <td className="border-r border-slate-900 p-1"></td>
-                      <td className="p-1"></td>
+                      <td className="border-r border-slate-900 p-1 print:py-0.5"></td>
+                      <td className="border-r border-slate-900 p-1 print:py-0.5"></td>
+                      <td className="border-r border-slate-900 p-1 print:py-0.5"></td>
+                      <td className="border-r border-slate-900 p-1 print:py-0.5"></td>
+                      <td className="p-1 print:py-0.5"></td>
                       <td className="no-print p-1"></td>
                     </tr>
                   ))}
@@ -439,17 +440,17 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({
             </div>
 
             {/* Calculations & In Words Section */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs mb-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 print:gap-2.5 text-xs mb-3 print:mb-2">
               {/* Left Side: In Words & Notes */}
-              <div className="space-y-3 flex flex-col justify-between">
+              <div className="space-y-2 flex flex-col justify-between">
                 <div>
-                  <div className="font-semibold text-slate-700 mb-1">কথায় (In Words):</div>
-                  <div className="p-2 border border-slate-300 rounded bg-slate-50/50 font-medium text-slate-800 italic">
+                  <div className="font-semibold text-slate-700 mb-0.5">কথায় (In Words):</div>
+                  <div className="p-1.5 border border-slate-300 rounded bg-slate-50/50 font-medium text-slate-800 italic text-[11px]">
                     {numberToBengaliWords(grandTotal)}
                   </div>
                 </div>
 
-                <div className="text-[11px] text-slate-500 border-t border-slate-200 pt-2">
+                <div className="text-[11px] text-slate-500 border-t border-slate-200 pt-1.5">
                   <div className="font-bold text-slate-700 mb-0.5">শর্তাবলী / বিশেষ দ্রষ্টব্য:</div>
                   <input
                     type="text"
@@ -461,7 +462,7 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({
               </div>
 
               {/* Right Side: Totals */}
-              <div className="border border-slate-900 rounded p-2.5 space-y-1.5 text-xs bg-slate-50/30">
+              <div className="border border-slate-900 rounded p-2 print:p-1.5 space-y-1 text-xs bg-slate-50/30">
                 <div className="flex justify-between items-center text-slate-700">
                   <span>মোট টাকা (Subtotal):</span>
                   <span className="font-bold text-slate-900">
@@ -493,7 +494,7 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({
                   />
                 </div>
 
-                <div className="flex justify-between items-center font-bold text-sm text-slate-950 border-t border-slate-900 pt-1">
+                <div className="flex justify-between items-center font-bold text-sm print:text-xs text-slate-950 border-t border-slate-900 pt-1">
                   <span>সর্বমোট বিল (Grand Total):</span>
                   <span className="text-emerald-800">
                     {formatCurrency(grandTotal, shopProfile.useBengaliDigits)}
@@ -522,7 +523,7 @@ export const CashMemoModal: React.FC<CashMemoModalProps> = ({
             </div>
 
             {/* Signature Area */}
-            <div className="mt-auto pt-10 print:pt-16 flex justify-between items-end text-xs text-slate-800">
+            <div className="mt-auto pt-4 print:pt-3 print:pb-0.5 flex justify-between items-end text-xs text-slate-800">
               <div className="text-center w-36">
                 <div className="border-t border-slate-900 pt-1">ক্রেতার স্বাক্ষর</div>
               </div>

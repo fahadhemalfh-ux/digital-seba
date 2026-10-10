@@ -23,6 +23,7 @@ import {
   getTodayDateString,
   isDateInRange,
 } from '../utils/helpers';
+import { MonthlyComparisonChart } from './MonthlyComparisonChart';
 
 interface DashboardOverviewProps {
   sales: SaleRecord[];
@@ -307,6 +308,14 @@ export const DashboardOverview: React.FC<DashboardOverviewProps> = ({
           </div>
         </div>
       </div>
+
+      {/* Visual Summary: Monthly Revenue vs Expenses Chart (Recharts) */}
+      <MonthlyComparisonChart
+        sales={sales}
+        purchases={purchases}
+        expenses={expenses}
+        shopProfile={shopProfile}
+      />
 
       {/* Recent Activities Section (Recent Sales & Purchases) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

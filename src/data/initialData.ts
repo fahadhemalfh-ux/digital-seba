@@ -10,6 +10,10 @@ export const defaultShopProfile: ShopProfile = {
   memoFooter: 'সততাই আমাদের মূলধন। ডিজিটাল সেবা গ্রহণ ও কেনাকাটা করার জন্য ধন্যবাদ। আবার আসবেন।',
   currency: '৳',
   useBengaliDigits: false,
+  printMarginTop: 6,
+  printMarginBottom: 6,
+  printMarginLeft: 8,
+  printMarginRight: 8,
 };
 
 export const defaultRateList: RateItem[] = [
@@ -45,6 +49,20 @@ export const getInitialData = (): {
   const tDate = new Date(d);
   tDate.setDate(d.getDate() - 2);
   const twoDaysAgo = tDate.toISOString().split('T')[0];
+
+  // Helper to format date YYYY-MM-DD
+  const formatYMD = (date: Date) => {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  };
+
+  // Past dates within current year
+  const getDateMonthsAgo = (monthsAgo: number, dayOfMonth = 15) => {
+    const target = new Date(d.getFullYear(), d.getMonth() - monthsAgo, dayOfMonth);
+    return formatYMD(target);
+  };
 
   const sales: SaleRecord[] = [
     {
@@ -167,6 +185,82 @@ export const getInitialData = (): {
       paymentMethod: 'due',
       notes: 'পূর্বের বকেয়া ২০০ টাকা বাকি',
     },
+    // Past months historical sample records for monthly comparison chart
+    {
+      id: 'sale-hist-1',
+      memoNo: 'MEMO-0850',
+      date: getDateMonthsAgo(1, 10),
+      time: '04:00 PM',
+      customerName: 'আব্দুল করিম',
+      customerPhone: '01711-002233',
+      items: [{ id: 'item-h1', name: 'কম্পিউটার কম্পোজ ও কালার প্রিন্ট', quantity: 20, unit: 'পাতা', unitPrice: 35, total: 700 }],
+      subtotal: 700,
+      discount: 0,
+      grandTotal: 18500,
+      paidAmount: 18500,
+      dueAmount: 0,
+      paymentMethod: 'cash',
+    },
+    {
+      id: 'sale-hist-2',
+      memoNo: 'MEMO-0710',
+      date: getDateMonthsAgo(2, 14),
+      time: '02:30 PM',
+      customerName: 'রফিকুল ইসলাম',
+      customerPhone: '01819-223344',
+      items: [{ id: 'item-h2', name: 'অনলাইন চাকরির আবেদন ও খাতা পত্র', quantity: 15, unit: 'সেট', unitPrice: 150, total: 2250 }],
+      subtotal: 2250,
+      discount: 0,
+      grandTotal: 22400,
+      paidAmount: 22400,
+      dueAmount: 0,
+      paymentMethod: 'cash',
+    },
+    {
+      id: 'sale-hist-3',
+      memoNo: 'MEMO-0620',
+      date: getDateMonthsAgo(3, 18),
+      time: '11:15 AM',
+      customerName: 'মনিরুল হক',
+      customerPhone: '01912-887766',
+      items: [{ id: 'item-h3', name: 'ফটোকপি ও লেমিনেশন', quantity: 50, unit: 'পাতা', unitPrice: 30, total: 1500 }],
+      subtotal: 1500,
+      discount: 0,
+      grandTotal: 16800,
+      paidAmount: 16800,
+      dueAmount: 0,
+      paymentMethod: 'cash',
+    },
+    {
+      id: 'sale-hist-4',
+      memoNo: 'MEMO-0512',
+      date: getDateMonthsAgo(4, 20),
+      time: '03:45 PM',
+      customerName: 'ডাঃ মোস্তাফিজুর রহমান',
+      customerPhone: '01611-332211',
+      items: [{ id: 'item-h4', name: 'ফটোকপি ও লিফলেট প্রিন্ট', quantity: 100, unit: 'পাতা', unitPrice: 3, total: 300 }],
+      subtotal: 300,
+      discount: 0,
+      grandTotal: 19500,
+      paidAmount: 19500,
+      dueAmount: 0,
+      paymentMethod: 'cash',
+    },
+    {
+      id: 'sale-hist-5',
+      memoNo: 'MEMO-0402',
+      date: getDateMonthsAgo(5, 12),
+      time: '10:00 AM',
+      customerName: 'শাহিনুর আলম',
+      customerPhone: '01511-998877',
+      items: [{ id: 'item-h5', name: 'স্টেশনারি খাতা ও কলম সেট', quantity: 10, unit: 'বক্স', unitPrice: 90, total: 900 }],
+      subtotal: 900,
+      discount: 0,
+      grandTotal: 24200,
+      paidAmount: 24200,
+      dueAmount: 0,
+      paymentMethod: 'cash',
+    },
   ];
 
   const purchases: PurchaseRecord[] = [
@@ -206,6 +300,56 @@ export const getInitialData = (): {
       totalCost: 3500,
       paymentMethod: 'cash',
       challanNo: 'JS-112',
+    },
+    {
+      id: 'pur-hist-1',
+      date: getDateMonthsAgo(1, 5),
+      supplierName: 'বাংলাবাজার পেপার এজেন্সি',
+      itemName: 'বসুন্ধরা পেপার ১৫ রিম ও কালি',
+      quantity: 15,
+      unit: 'রিম',
+      totalCost: 7200,
+      paymentMethod: 'cash',
+    },
+    {
+      id: 'pur-hist-2',
+      date: getDateMonthsAgo(2, 6),
+      supplierName: 'আইটি ভ্যালি সাপ্লাই',
+      itemName: 'লেজার টোনার ও ড্রাম কিট',
+      quantity: 4,
+      unit: 'পিস',
+      totalCost: 8500,
+      paymentMethod: 'bkash',
+    },
+    {
+      id: 'pur-hist-3',
+      date: getDateMonthsAgo(3, 8),
+      supplierName: 'জনতা স্টেশনারি',
+      itemName: 'খাতা, কলম ও ফাইল পাইকারি স্টক',
+      quantity: 50,
+      unit: 'পিস',
+      totalCost: 6400,
+      paymentMethod: 'cash',
+    },
+    {
+      id: 'pur-hist-4',
+      date: getDateMonthsAgo(4, 11),
+      supplierName: 'বাংলাবাজার পেপার এজেন্সি',
+      itemName: 'A4 ও লিগ্যাল সাইজ কাগজ',
+      quantity: 12,
+      unit: 'রিম',
+      totalCost: 7800,
+      paymentMethod: 'cash',
+    },
+    {
+      id: 'pur-hist-5',
+      date: getDateMonthsAgo(5, 7),
+      supplierName: 'স্টেশনারি ও টোনার মার্ট',
+      itemName: 'ফটোকপি টোনার পাউডার ও খাতা',
+      quantity: 8,
+      unit: 'পিস',
+      totalCost: 9200,
+      paymentMethod: 'cash',
     },
   ];
 
@@ -248,6 +392,46 @@ export const getInitialData = (): {
       category: 'rent',
       description: 'দোকান ভাড়ার কিস্তি',
       amount: 3500,
+      paymentMethod: 'cash',
+    },
+    {
+      id: 'exp-hist-1',
+      date: getDateMonthsAgo(1, 28),
+      category: 'rent',
+      description: 'গত মাসের দোকান ভাড়া ও কারেন্ট বিল',
+      amount: 5200,
+      paymentMethod: 'cash',
+    },
+    {
+      id: 'exp-hist-2',
+      date: getDateMonthsAgo(2, 28),
+      category: 'rent',
+      description: 'দোকান ভাড়া ও ইন্টারনেট বিল',
+      amount: 4800,
+      paymentMethod: 'cash',
+    },
+    {
+      id: 'exp-hist-3',
+      date: getDateMonthsAgo(3, 27),
+      category: 'rent',
+      description: 'দোকান ভাড়া ও রক্ষণাবেক্ষণ খরচ',
+      amount: 5100,
+      paymentMethod: 'cash',
+    },
+    {
+      id: 'exp-hist-4',
+      date: getDateMonthsAgo(4, 28),
+      category: 'rent',
+      description: 'দোকান ভাড়া ও বিদ্যুৎ বিল',
+      amount: 4950,
+      paymentMethod: 'cash',
+    },
+    {
+      id: 'exp-hist-5',
+      date: getDateMonthsAgo(5, 26),
+      category: 'rent',
+      description: 'দোকান ভাড়া ও মেশিনারিজ সার্ভিসিং',
+      amount: 5600,
       paymentMethod: 'cash',
     },
   ];

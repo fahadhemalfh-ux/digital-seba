@@ -11,6 +11,9 @@ import {
   CheckCircle2,
   AlertTriangle,
   FileSpreadsheet,
+  Printer,
+  Sliders,
+  Check,
 } from 'lucide-react';
 import { ExpenseRecord, PurchaseRecord, SaleRecord, ShopProfile } from '../types';
 import { exportToCSV, getTodayDateString } from '../utils/helpers';
@@ -52,9 +55,20 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
   const [whatsappNumber, setWhatsappNumber] = useState(shopProfile.whatsappNumber || '');
   const [memoFooter, setMemoFooter] = useState(shopProfile.memoFooter);
   const [useBengaliDigits, setUseBengaliDigits] = useState(shopProfile.useBengaliDigits);
+  const [printMarginTop, setPrintMarginTop] = useState<number>(shopProfile.printMarginTop ?? 6);
+  const [printMarginBottom, setPrintMarginBottom] = useState<number>(shopProfile.printMarginBottom ?? 6);
+  const [printMarginLeft, setPrintMarginLeft] = useState<number>(shopProfile.printMarginLeft ?? 8);
+  const [printMarginRight, setPrintMarginRight] = useState<number>(shopProfile.printMarginRight ?? 8);
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   if (!isOpen) return null;
+
+  const handleApplyPreset = (top: number, bottom: number, left: number, right: number) => {
+    setPrintMarginTop(top);
+    setPrintMarginBottom(bottom);
+    setPrintMarginLeft(left);
+    setPrintMarginRight(right);
+  };
 
   const handleSaveProfile = (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,6 +81,10 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
       whatsappNumber: whatsappNumber.trim(),
       memoFooter: memoFooter.trim(),
       useBengaliDigits,
+      printMarginTop: Number(printMarginTop) >= 0 ? Number(printMarginTop) : 6,
+      printMarginBottom: Number(printMarginBottom) >= 0 ? Number(printMarginBottom) : 6,
+      printMarginLeft: Number(printMarginLeft) >= 0 ? Number(printMarginLeft) : 8,
+      printMarginRight: Number(printMarginRight) >= 0 ? Number(printMarginRight) : 8,
     };
     onUpdateShopProfile(updated);
     setSaveSuccess(true);
@@ -83,8 +101,13 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         propName,
         address,
         phone,
+        whatsappNumber,
         memoFooter,
         useBengaliDigits,
+        printMarginTop,
+        printMarginBottom,
+        printMarginLeft,
+        printMarginRight,
       },
       sales,
       purchases,
@@ -149,7 +172,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         <div className="bg-slate-900 text-white px-5 py-4 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2">
             <Settings className="w-5 h-5 text-emerald-400" />
-            <h3 className="font-bold text-base">দোকানের তথ্য ও ডাটা ব্যাকআপ সেটিংস</h3>
+            <h3 className="font-bold text-base">দোকানের তথ্য, প্রিন্ট মার্জিন ও ডাটা ব্যাকআপ</h3>
           </div>
           <button
             onClick={onClose}
@@ -281,13 +304,209 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               </div>
             </div>
 
-            <div className="flex justify-end">
+            {/* Print Margins & Single-Page Settings Section */}
+            <div className="border-t border-slate-200 pt-5 space-y-3.5">
+              <div className="flex items-center justify-between">
+                <h4 className="font-bold text-sm text-slate-900 flex items-center gap-1.5">
+                  <Printer className="w-4 h-4 text-teal-600" />
+                  ক্যাশ মেমো প্রিন্ট মার্জিন সেটিংস (Print Margins)
+                </h4>
+                <span className="text-[11px] font-semibold text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
+                  ১-পেজ ফুল ফিট
+                </span>
+              </div>
+              <p className="text-slate-500 text-[11px]">
+                আপনার প্রিন্টারের সাথে মিলিয়ে মেমোর চারপাশের মার্জিন কাস্টমাইজ করুন। ১টি পাতায় সম্পূর্ণ মেমো প্রিন্ট করতে ডিফল্ট বা ৪-৬ মিমি মার্জিন ব্যবহারের পরামর্শ দেওয়া হচ্ছে।
+              </p>
+
+              {/* Quick Preset Buttons */}
+              <div>
+                <label className="block text-slate-700 font-medium mb-1.5">
+                  দ্রুত মার্জিন প্রিসেট (Quick Presets):
+                </label>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => handleApplyPreset(6, 6, 8, 8)}
+                    className={`px-2.5 py-1.5 rounded-lg border text-left transition-colors ${
+                      printMarginTop === 6 && printMarginBottom === 6 && printMarginLeft === 8 && printMarginRight === 8
+                        ? 'border-teal-500 bg-teal-50 text-teal-900 font-bold'
+                        : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs">১-পেজ পারফেক্ট</span>
+                      {printMarginTop === 6 && printMarginBottom === 6 && printMarginLeft === 8 && printMarginRight === 8 && (
+                        <Check className="w-3 h-3 text-teal-600" />
+                      )}
+                    </div>
+                    <div className="text-[10px] text-slate-500">৬mm / ৮mm (ডিফল্ট)</div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleApplyPreset(4, 4, 5, 5)}
+                    className={`px-2.5 py-1.5 rounded-lg border text-left transition-colors ${
+                      printMarginTop === 4 && printMarginBottom === 4 && printMarginLeft === 5 && printMarginRight === 5
+                        ? 'border-teal-500 bg-teal-50 text-teal-900 font-bold'
+                        : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs">ন্যূনতম / ন্যারো</span>
+                      {printMarginTop === 4 && printMarginBottom === 4 && printMarginLeft === 5 && printMarginRight === 5 && (
+                        <Check className="w-3 h-3 text-teal-600" />
+                      )}
+                    </div>
+                    <div className="text-[10px] text-slate-500">৪mm / ৫mm (কম্প্যাক্ট)</div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleApplyPreset(2, 2, 3, 3)}
+                    className={`px-2.5 py-1.5 rounded-lg border text-left transition-colors ${
+                      printMarginTop === 2 && printMarginBottom === 2 && printMarginLeft === 3 && printMarginRight === 3
+                        ? 'border-teal-500 bg-teal-50 text-teal-900 font-bold'
+                        : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs">জিরো / ফুল পেজ</span>
+                      {printMarginTop === 2 && printMarginBottom === 2 && printMarginLeft === 3 && printMarginRight === 3 && (
+                        <Check className="w-3 h-3 text-teal-600" />
+                      )}
+                    </div>
+                    <div className="text-[10px] text-slate-500">২mm / ৩mm</div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleApplyPreset(10, 10, 12, 12)}
+                    className={`px-2.5 py-1.5 rounded-lg border text-left transition-colors ${
+                      printMarginTop === 10 && printMarginBottom === 10 && printMarginLeft === 12 && printMarginRight === 12
+                        ? 'border-teal-500 bg-teal-50 text-teal-900 font-bold'
+                        : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs">প্রশস্ত মার্জিন</span>
+                      {printMarginTop === 10 && printMarginBottom === 10 && printMarginLeft === 12 && printMarginRight === 12 && (
+                        <Check className="w-3 h-3 text-teal-600" />
+                      )}
+                    </div>
+                    <div className="text-[10px] text-slate-500">১০mm / ১২mm</div>
+                  </button>
+                </div>
+              </div>
+
+              {/* Manual Margin Adjustment Grid */}
+              <div className="bg-slate-50 p-3.5 rounded-xl border border-slate-200 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="font-semibold text-slate-800 flex items-center gap-1.5">
+                    <Sliders className="w-3.5 h-3.5 text-slate-600" />
+                    ম্যানুয়াল মার্জিন ইনপুট (মিমি / mm):
+                  </span>
+                  <span className="text-[11px] text-slate-500 font-mono">
+                    উপর: {printMarginTop}mm | নিচ: {printMarginBottom}mm | বাম: {printMarginLeft}mm | ডান: {printMarginRight}mm
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                  <div>
+                    <label className="block text-[11px] text-slate-600 font-medium mb-1">
+                      উপর (Top)
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        min="0"
+                        max="30"
+                        step="1"
+                        value={printMarginTop}
+                        onChange={(e) => setPrintMarginTop(Number(e.target.value))}
+                        className="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-teal-500 focus:outline-hidden font-bold pr-8"
+                      />
+                      <span className="absolute right-2 top-2 text-[10px] text-slate-400 font-medium">mm</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] text-slate-600 font-medium mb-1">
+                      নিচ (Bottom)
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        min="0"
+                        max="30"
+                        step="1"
+                        value={printMarginBottom}
+                        onChange={(e) => setPrintMarginBottom(Number(e.target.value))}
+                        className="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-teal-500 focus:outline-hidden font-bold pr-8"
+                      />
+                      <span className="absolute right-2 top-2 text-[10px] text-slate-400 font-medium">mm</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] text-slate-600 font-medium mb-1">
+                      বাম (Left)
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        min="0"
+                        max="30"
+                        step="1"
+                        value={printMarginLeft}
+                        onChange={(e) => setPrintMarginLeft(Number(e.target.value))}
+                        className="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-teal-500 focus:outline-hidden font-bold pr-8"
+                      />
+                      <span className="absolute right-2 top-2 text-[10px] text-slate-400 font-medium">mm</span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] text-slate-600 font-medium mb-1">
+                      ডান (Right)
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        min="0"
+                        max="30"
+                        step="1"
+                        value={printMarginRight}
+                        onChange={(e) => setPrintMarginRight(Number(e.target.value))}
+                        className="w-full px-2.5 py-1.5 border border-slate-300 rounded-lg text-xs bg-white focus:ring-2 focus:ring-teal-500 focus:outline-hidden font-bold pr-8"
+                      />
+                      <span className="absolute right-2 top-2 text-[10px] text-slate-400 font-medium">mm</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Print Guide Tips Box */}
+                <div className="p-3 bg-teal-50/70 border border-teal-200/80 rounded-lg space-y-1 text-[11px] text-teal-950">
+                  <div className="font-bold text-teal-900 flex items-center gap-1">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-teal-700" />
+                    ১ পেজে নিখুঁত মেমো প্রিন্ট করার নির্দেশিকা:
+                  </div>
+                  <ul className="list-disc list-inside space-y-0.5 text-[10.5px] text-teal-800">
+                    <li>প্রিন্ট ডায়ালগে (Ctrl + P) <strong>Margins</strong> অপশন <strong>Default</strong> অথবা <strong>None</strong> রাখুন।</li>
+                    <li>ব্রাউজারের <strong>More settings</strong> থেকে <strong>Headers and footers</strong> অপশনটি <strong>আনচেক (তুলে দিন)</strong> রাখুন যাতে অতিরিক্ত তারিখ/হেডার না আসে।</li>
+                    <li>প্রিন্ট মার্জিন ৪-৬ মিমি রাখলে পুরো মেমোটি ১ পৃষ্ঠায় সুন্দরভাবে আঁটবে, ৩ পাতায় কখনোই ছড়াবে না।</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-2">
               <button
                 type="submit"
-                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold flex items-center gap-1.5 shadow-xs transition-colors"
+                className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-semibold flex items-center gap-1.5 shadow-xs transition-colors"
               >
                 <Save className="w-4 h-4" />
-                <span>দোকানের তথ্য সেভ করুন</span>
+                <span>সকল তথ্য ও মার্জিন সেটিংস সেভ করুন</span>
               </button>
             </div>
           </form>
